@@ -1,10 +1,8 @@
-// server.js
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
 import multer from "multer";
-import fs from "fs";
 
 dotenv.config();
 
@@ -12,32 +10,39 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
-const upload = multer({ dest: "/tmp" });
-
+// Use memory storage for serverless compatibility (Vercel)
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 const uploadImage = async (file) => {
   if (!file) return null;
-  const result = await cloudinary.uploader.upload(file.path, {
-    folder: "ZEROUP-PARTNERS-APP",
+  
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "ZEROUP-PARTNERS-APP",
+      },
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result.secure_url);
+        }
+      }
+    );
+    uploadStream.end(file.buffer);
   });
-  fs.unlinkSync(file.path); 
-  return result.secure_url;
 };
-
-
 
 app.get("/", (req, res) => {
   res.send("ZEROUP PARTNERS APP API is running");
 });
-
 
 app.post("/upload", upload.single("image"), async (req, res) => {
   try {
