@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZeroUp Image Upload</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        color: #333;
+      }
+      .container {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 100%;
+        max-width: 400px;
+      }
+      h1 {
+        color: #4a90e2;
+        margin-bottom: 1.5rem;
+      }
+      .upload-area {
+        border: 2px dashed #ccc;
+        padding: 2rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: border-color 0.3s;
+      }
+      .upload-area:hover {
+        border-color: #4a90e2;
+      }
+      input[type="file"] {
+        display: none;
+      }
+      .btn {
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 1rem;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 1rem;
+        transition: background-color 0.3s;
+      }
+      .btn:hover {
+        background-color: #357abd;
+      }
+      #result {
+        margin-top: 1.5rem;
+        text-align: left;
+        word-break: break-all;
+        display: none;
+      }
+      #result a {
+        color: #4a90e2;
+        text-decoration: none;
+      }
+      #result img {
+        max-width: 100%;
+        margin-top: 10px;
+        border-radius: 4px;
+      }
+      .loading {
+        display: none;
+        color: #666;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>ZeroUp Upload</h1>
+      <form id="uploadForm">
+        <label class="upload-area" for="fileInput">
+          <span id="fileLabel">Click to select an image</span>
+          <input
+            type="file"
+            id="fileInput"
+            name="image"
+            accept="image/*"
+            required
+          />
+        </label>
+        <button type="submit" class="btn">Upload Image</button>
+      </form>
+      <div class="loading" id="loading">Uploading...</div>
+      <div id="result">
+        <h3>Upload Successful!</h3>
+        <p>
+          <strong>URL:</strong> <a href="#" id="imgUrl" target="_blank"></a>
+        </p>
+        <img id="preview" src="" alt="Uploaded Image" />
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("uploadForm");
+      const fileInput = document.getElementById("fileInput");
+      const fileLabel = document.getElementById("fileLabel");
+      const loading = document.getElementById("loading");
+      const result = document.getElementById("result");
+      const imgUrl = document.getElementById("imgUrl");
+      const preview = document.getElementById("preview");
+
+      fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+          fileLabel.textContent = e.target.files[0].name;
+        }
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        loading.style.display = "block";
+        result.style.display = "none";
+
+        try {
+          const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            imgUrl.href = data.url;
+            imgUrl.textContent = data.url;
+            preview.src = data.url;
+            result.style.display = "block";
+          } else {
+            alert("Upload failed: " + (data.error || "Unknown error"));
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred during upload.");
+        } finally {
+          loading.style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>
