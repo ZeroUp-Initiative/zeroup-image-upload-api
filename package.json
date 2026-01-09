@@ -1,25 +1,16 @@
 {
-<<<<<<< HEAD
-  "name": "clean-cal",
-  "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
-=======
-  "name": "zeroup-image-upload-api-project",
+  "name": "zeroup-image-upload-api",
   "version": "1.0.0",
   "description": "Image upload API using Cloudinary",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
->>>>>>> 8a2a00beceb0ee7cdcd3e957039981fc16220f33
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'No build step required'"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-<<<<<<< HEAD
   "type": "module",
   "dependencies": {
     "cloudinary": "^2.8.0",
@@ -36,12 +27,4 @@
     "url": "https://github.com/ZeroUp-Initiative/zeroup-image-upload-api/issues"
   },
   "homepage": "https://github.com/ZeroUp-Initiative/zeroup-image-upload-api#readme"
-=======
-  "dependencies": {
-    "cloudinary": "^2.8.0",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "multer": "^2.0.2"
-  }
->>>>>>> 8a2a00beceb0ee7cdcd3e957039981fc16220f33
 }
